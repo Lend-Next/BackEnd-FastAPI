@@ -1,0 +1,63 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+ 
+# Virtual environment directories
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+*.env
+ 
+# Cache files
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+pip-wheel-metadata/
+ 
+# SQLite database files
+*.db
+*.sqlite3
+ 
+# Testing and coverage
+.coverage
+*.coverage
+htmlcov/
+ 
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+ 
+# macOS-specific files
+.DS_Store
+ 
+# System files
+Thumbs.db
+desktop.ini
+ 
+# PyCharm settings
+*.iml
+.idea/
+ 
+# Deployment-related
+*.key
+*.pem
+*.crt
+*.lock
+ 
+# FastAPI generated files (if applicable)
+*.log
+*.json
+ 
+# If you're using Docker
+docker-compose.override.yml
+.dockerignore
+ 
+# Exclude files specific to your project
+/static/

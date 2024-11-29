@@ -74,8 +74,17 @@ import jwt
 import boto3
 from typing import Optional
 from datetime import datetime, timedelta
+from employmentverification.schemas import EmploymentResponse,EmploymentRequest
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from database import SessionLocal  # Importing SessionLocal from database.py
+from employmentverification.crud import fetch_company_details
+from employmentverification.models import employmentverification
 
 app = FastAPI()
+
 
 # Cognito User Pool Settings
 CLIENT_ID = 'hkibiomfmpuh9m0oorc1rknkk'
@@ -173,3 +182,40 @@ async def signin(user: User):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()  # Create a new session
+    try:
+        yield db  # Yield the session so it can be used in endpoints
+    finally:
+        db.close()  # Make sure to close the session when done
+    #models.Base.metadata.create_all(bind=engine)
+
+@app.post("/employmentverification",response_model=EmploymentResponse)
+def employmentdetails(request: EmploymentRequest, db: Session = Depends(get_db)):
+    email = request.email
+
+    details = fetch_company_details(email)
+    record = employmentverification(
+        mail=email,
+        company_name=details["company_name"],
+        result=details["result"],
+        current_term=details["current_term"],
+    )
+    try:
+        db.add(record)
+        db.commit()
+        db.refresh(record)
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Database error")
+
+    # Return the response
+    return {
+        "mail": email,
+        "company_name": details["company_name"],
+        "result": details["result"],
+        "current_term": details["current_term"],
+    }
+    
