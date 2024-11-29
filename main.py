@@ -1,72 +1,3 @@
-# from fastapi import FastAPI, HTTPException, Depends, status, Response
-# from fastapi.responses import JSONResponse
-# from pydantic import BaseModel
-# from typing import List, Annotated
-# from registration import models
-# from database import engine, SessionLocal
-# from sqlalchemy.orm import Session
-
-# from registration.crud import create_user, get_users, delete_users, update_users
-
-# from registration.schemas import UserCreate, ResponseUser
-
-# # Create an instance of the FastAPI class
-# app = FastAPI()
-
-# models.Base.metadata.create_all(bind=engine)
-
-# # class groupBase(BaseModel):
-# #     group_name: str
-# #     description: str
-# #     is_active: bool
-
-# #     class Config:
-# #         orm_mode = True
-
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
-
-# # db_dependency = Annotated[Session, Depends(get_db)]
- 
-
-
-# @app.post("/users/", status_code= status.HTTP_201_CREATED)
-# async def create_user_records(user: UserCreate, db: Session = Depends(get_db)):  
-#     try:
-#         db_user = create_user(db=db, user=user)
-#         return db_user
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-# @app.get("/users/", status_code= 200, response_model = List[ResponseUser])
-# async def get_user_records(firstname, response: Response, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-#     try:
-#         db_users = get_users(firstname=firstname, response=response, db=db, skip=skip, limit=limit)
-#         return db_users
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")\
-        
-# @app.delete("/users/", status_code= status.HTTP_204_NO_CONTENT)
-# async def delete_user_records(firstname, db: Session = Depends(get_db)):
-#     try:
-#         message = delete_users(firstname=firstname, db=db)
-#         return message
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-# @app.put("/users/", status_code= status.HTTP_202_ACCEPTED)
-# async def update_user_records(firstname, mobilenumber, db: Session = Depends(get_db)):
-#     try:
-#         message = update_users(firstname=firstname, mobilenumber=mobilenumber, db=db)
-#         return message
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
@@ -82,9 +13,49 @@ from sqlalchemy.orm import Session
 from database import SessionLocal  # Importing SessionLocal from database.py
 from employmentverification.crud import fetch_company_details
 from employmentverification.models import employmentverification
+from getaccounts.schemas import GetBankAccountResponse
+from getaccounts.models import GetBankAccount
+from typing import List
 
 app = FastAPI()
 
+#mock response for getaccounts
+mock_data = {
+    "results": [
+        {
+            "update_timestamp": "2017-02-07T17:29:24.740802Z",
+            "account_id": "f1234560abf9f57287637624def390871",
+            "account_type": "TRANSACTION",
+            "display_name": "Club Lloyds",
+            "currency": "GBP",
+            "account_number": {
+                "iban": "GB35LOYD12345678901234",
+                "number": "12345678",
+                "sort_code": "12-34-56",
+                "swift_bic": "LOYDGB2L"
+            },
+            "provider": {
+                "provider_id": "lloyds"
+            }
+        },
+        {
+            "update_timestamp": "2017-02-07T17:29:24.740802Z",
+            "account_id": "f1234560abf9f57287637624def390872",
+            "account_type": "SAVINGS",
+            "display_name": "Club Lloyds",
+            "currency": "GBP",
+            "account_number": {
+                "iban": "GB35LOYD12345678901235",
+                "number": "12345679",
+                "sort_code": "12-34-57",
+                "swift_bic": "LOYDGB2L"
+            },
+            "provider": {
+                "provider_id": "lloyds"
+            }
+        }
+    ]
+}
 
 # Cognito User Pool Settings
 CLIENT_ID = 'hkibiomfmpuh9m0oorc1rknkk'
@@ -218,4 +189,35 @@ def employmentdetails(request: EmploymentRequest, db: Session = Depends(get_db))
         "result": details["result"],
         "current_term": details["current_term"],
     }
-    
+
+@app.get("/accounts", response_model=List[GetBankAccountResponse])
+def get_accounts():
+    session = SessionLocal()
+    try:
+        for item in mock_data["results"]:
+            account_number = item["account_number"]
+        
+            if not session.query(GetBankAccount).filter_by(account_id=item["account_id"]).first():
+                account = GetBankAccount(
+                    account_id = item["account_id"],
+                    account_type = item["account_type"],
+                    display_name=item["display_name"],
+                    currency=item["currency"],
+                    iban=account_number["iban"],
+                    number=account_number["number"],
+                    sort_code=account_number["sort_code"],
+                    swift_bic=account_number["swift_bic"],
+                    person_id=None,
+                    agent_id=None
+                )
+                session.add(account)
+        session.commit()
+        
+
+        accounts = session.query(GetBankAccount).all()
+        return accounts
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        session.close()
