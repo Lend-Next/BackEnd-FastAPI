@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-sqlalchemy
-passlib
-bcrypt
-boto3
-pyjwt
