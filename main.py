@@ -8,7 +8,6 @@ from registration.routes import router as registration_router
 
 
 app = FastAPI(title="CK-LendNext API")
-app = FastAPI(title="Cognito User Info API")
 
 # Create the database tables
 Base.metadata.create_all(bind=engine)
