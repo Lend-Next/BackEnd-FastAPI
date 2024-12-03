@@ -67,109 +67,57 @@
 #         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
-import jwt
-import boto3
-from typing import Optional
-from datetime import datetime, timedelta
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+# Import all folder variables
+from registration.routes import router as registration_router
+# from registration.schemas import UserEmail, CreateUser, ConfirmUser, SigninUser
+# from registration.crud import create_user, confirm_signup, signin_user
 
 app = FastAPI()
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Cognito User Pool Settings
-CLIENT_ID = 'hkibiomfmpuh9m0oorc1rknkk'
-REGION = 'ap-south-1'
-JWT_SECRET= 'your-jwt-secret-key'
 
-cognito_client = boto3.client('cognito-idp',region_name=REGION)
 
-# OAuth2 settings
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-class User(BaseModel):
-    name: str
-    email: str
-    mobile_number: Optional[str]= None
-    password: str
-    confirmation_code: Optional[str]= None
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+# class Token(BaseModel):
+#     access_token: str
+#     token_type: str
 
-def create_jwt_token(name: str):
-    payload ={
-        "sub": name,
-        "exp": datetime.utcnow() + timedelta(hours=1)
-    }
-    token= jwt.encode(payload, JWT_SECRET, algorithm="HS256")
-    return token
 
-def decode_jwt_token(token: str):
-    try:
-        payload = jwt.decode(token, JWT_SECRET, algorithm=["HS256"])
-        return payload
-    except jwt.ExpireSignatureError:
-        raise HTTPException(status_code=401, detail="token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="invalid token")
 
-@app.post("/Signup", response_model=dict)
-async def signup(user: User):  
-    try:
-        response= cognito_client.sign_up(
-            ClientId = CLIENT_ID,
-            Username = user.email,
-            Password = user.password,
-            UserAttributes=[
-                {
-                    'Name': 'email',
-                    'Value': user.email
-                },
-                {
-                    'Name': 'name',
-                    'Value': user.name
-                },
-                {
-                    'Name': 'phone_number',
-                    'Value': user.mobile_number
-                }
-            ]
-        )
-        return response
-    except cognito_client.exceptions.UsernameExistsException:
-        raise HTTPException(status_code=400, detail="User nameexists")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# def decode_jwt_token(token: str):
+#     try:
+#         payload = jwt.decode(token, JWT_SECRET, algorithm=["HS256"])
+#         return payload
+#     except jwt.ExpireSignatureError:
+#         raise HTTPException(status_code=401, detail="token has expired")
+#     except jwt.InvalidTokenError:
+#         raise HTTPException(status_code=401, detail="invalid token")
 
-@app.post("/Confirm", response_model=dict)
-async def confirm_signup(user: User):  
-    try:
-        response= cognito_client.confirm_sign_up(
-            ClientId = CLIENT_ID,
-            Username = user.email,
-            ConfirmationCode = user.confirmation_code
-            
-        )
-        return response
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# @app.post("/signup", response_model=dict)
+# async def signup(user: CreateUser):  
+#     return create_user(user=user)
 
-@app.post("/Signin", response_model=Token)
-async def signin(user: User):  
-    try:
-        response= cognito_client.initiate_auth(
-            AuthFlow='USER_PASSWORD_AUTH',
-            AuthParameters={
-                'USERNAME': user.email,
-                'PASSWORD': user.password
-            },
-            ClientId = CLIENT_ID
-        )
-        token= create_jwt_token(user.email)
-        return {'access_token': token, 'token_type': 'bearer'}
-    except cognito_client.exceptions.NotAuthorizedException:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+# @app.post("/confirm", response_model=dict)
+# async def confirmSignup(user: ConfirmUser):
+#     return confirm_signup(user=user)
+
+# @app.post("/resend_confirm", response_model=dict)
+# async def resendConfirm(user: UserEmail):
+#     return resend_confirm(user=user)
+
+# @app.post("/signin", response_model=dict)
+# async def signin(user: SigninUser):
+#     return signin_user(user=user)
+    
+app.include_router(registration_router, prefix="/registration", tags=["Registration"])
