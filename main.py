@@ -6,6 +6,7 @@ from cognito_user_info.routes import router as user_info_router
 from fastapi.middleware.cors import CORSMiddleware
 from registration.routes import router as registration_router
 from scorecard.routes import router as scorecard_router
+from application.routes import router as application_router
 
 
 app = FastAPI(title="CK-LendNext API")
@@ -27,6 +28,7 @@ app.include_router(registration_router, prefix="/registration", tags=["Registrat
 app.include_router(persons_router, prefix="/persons", tags=["Persons"])
 app.include_router(user_info_router, prefix="/current-user", tags=["User Info"])
 app.include_router(scorecard_router,prefix="/scorecard", tags=["Scorecard"])
+app.include_router(application_router, prefix="/application", tags=["Application"])
 
 
 @app.get("/")
