@@ -86,34 +86,8 @@ def confirm_signup(user: ConfirmUser):
 
 def resend_confirm(user: UserEmail):
     try:
-        # Step 1: Get user details (to check if they are unconfirmed)
-        # response = cognito_client.admin_get_user(
-        #     UserPoolId=USER_POOL_ID,
-        #     Username=user.email
-        # )
-
-        # # Check if the user is confirmed or not
-        # user_status = next((attr['Value'] for attr in response['UserAttributes'] if attr['Name'] == 'email_verified'), None)
-
-        # if user_status == "true":
-        #     return {"message": "User is already confirmed."}
-        
-        # # If user is unconfirmed, resend the confirmation code (this will trigger the resend process)
-        # # Admin confirmation can trigger the confirmation code to be sent.
-        # cognito_client.admin_update_user_attributes(
-        #     UserPoolId=USER_POOL_ID,
-        #     Username=user.email,
-        #     UserAttributes=[{
-        #         'Name': 'email_verified', 'Value': 'false'  # Force it to 'false' so it triggers confirmation
-        #     }]
-        # )
-        # response = cognito_client.admin_create_user(
-        #     UserPoolId=USER_POOL_ID,
-        #     Username=user.email,
-        #     MessageAction="RESEND",  # This will send the invite again
-        # )
-        cognito_client.admin_confirm_sign_up(
-            UserPoolId=USER_POOL_ID,
+        response = cognito_client.resend_confirmation_code(
+            ClientId=CLIENT_ID,
             Username=user.email
         )
         return {"message": "Confirmation code has been resent to the user."}
