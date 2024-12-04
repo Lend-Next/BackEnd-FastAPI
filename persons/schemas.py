@@ -29,6 +29,7 @@ class PersonBase(BaseModel):
     current_country: Optional[str]
     no_of_dependents: Optional[int]
     time_at_current_address: Optional[int]
+    verified_user: Optional[bool]
     user_id: Optional[str]
 
 class PersonCreate(PersonBase):

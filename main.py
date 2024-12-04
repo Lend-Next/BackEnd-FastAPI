@@ -5,6 +5,7 @@ from persons.models import Base  # Import the Base from your models
 from cognito_user_info.routes import router as user_info_router
 from fastapi.middleware.cors import CORSMiddleware
 from registration.routes import router as registration_router
+# from imageupload.routes import router as image_router
 
 
 app = FastAPI(title="CK-LendNext API")
@@ -25,7 +26,7 @@ app.add_middleware(
 app.include_router(registration_router, prefix="/registration", tags=["Registration"])
 app.include_router(persons_router, prefix="/persons", tags=["Persons"])
 app.include_router(user_info_router, prefix="/current-user", tags=["User Info"])
-
+# app.include_router(image_router)
 
 @app.get("/")
 def read_root():
