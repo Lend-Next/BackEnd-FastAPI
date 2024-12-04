@@ -1,52 +1,50 @@
 from fastapi import FastAPI, HTTPException, APIRouter
-from pydantic import BaseModel
-import pandas as pd
-import scorecardpy as sc
-from sklearn.linear_model import LogisticRegression
-from scorecard.schemas import CreditData
+from typing import List
+from scorecard.schemas import ScorecardRule,CreditData
 
 router = APIRouter()
 
-# Example training data
-data = pd.DataFrame({
-    "age": [23, 45, 56, 34, 67],  # Feature column
-    "income": [40000, 80000, 120000, 60000, 70000],  # Another feature column
-    "y": [0, 1, 0, 1, 0]  # Target column (binary outcome)
-})
+# In-memory storage for scorecard rules (this can be a database in production)
+scorecard_rules: List[ScorecardRule] = []
 
-# Generate WOE bins for features
-bins = sc.woebin(data, y="y")
+@router.post("/admin/rules/")
+async def configure_scorecard_rules(rules: List[ScorecardRule]):
+    global scorecard_rules
+    scorecard_rules = rules  # Store the rules in memory (or a DB)
+    return {"message": "Rules configured successfully"}
 
-# Apply WOE transformation to data
-woe_data = sc.woebin_ply(data, bins)
-
-# Print columns of `woe_data` to check the actual names after WOE transformation
-print("WOE Data Columns:", woe_data.columns)  # Debugging step to inspect column names
-
-# Select feature columns for modeling (Ensure columns like 'age_woe', 'income_woe' exist)
-xcolumns = ["age_woe", "income_woe"]  # Use the exact names you expect from WOE transformation
-X = woe_data[xcolumns]
-y = woe_data["y"]
-
-# Train a logistic regression model
-model = LogisticRegression()
-model.fit(X, y)
-
-# Generate scorecard using the trained model
-scorecard = sc.scorecard(bins, model, xcolumns, points0=600, odds0=1/20, pdo=50)
-
-
-# Scoring endpoint
-@router.post("/")
-async def score(request: CreditData):
-    try:
-        # Convert input data to DataFrame
-        # Example training data
-        data = pd.DataFrame({
-            "age": [23, 45, 56, 34, 67],  # Feature column
-            "income": [40000, 80000, 120000, 60000, 70000],  # Another feature column
-            "y": [0, 1, 0, 1, 0]  # Target column (binary outcome)
-        })
+def evaluate_rules(user_data: dict) -> float:
+    score = 0
+    
+    # Iterate through each configured rule and evaluate against user input
+    for rule in scorecard_rules:
+        user_value = user_data.get(rule.field)
         
+        if user_value is None:
+            raise HTTPException(status_code=400, detail=f"Field {rule.field} is missing in user input")
+        
+        # Compare the user value with the rule value based on the operator
+        if rule.operator == ">":
+            if user_value > rule.value:
+                score += rule.score  # Add the score for the rule
+        elif rule.operator == "<":
+            if user_value < rule.value:
+                score += rule.score  # Add the score for the rule
+        elif rule.operator == "=":
+            if user_value == rule.value:
+                score += rule.score  # Add the score for the rule
+    
+    return score
+
+@router.post("/")
+async def evaluate_score(user_data: CreditData):
+    try:
+        # Convert user data to dictionary
+        user_data_dict = user_data.dict()
+        
+        # Evaluate the score based on configured rules
+        score = evaluate_rules(user_data_dict)
+        
+        return {"score": score}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
