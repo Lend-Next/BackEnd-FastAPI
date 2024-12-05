@@ -61,37 +61,60 @@ def update_person(db: Session, personId: str, person: PersonBase):
     if not db_person:
         return None  # Return None if the person is not found
 
-    db_person.email = person.email
-    db_person.person_name = person.personName
-    db_person.first_name = person.firstName
-    db_person.last_name = person.lastName
-    db_person.father_name = person.fatherName
-    db_person.email = person.email
-    db_person.marital_status = person.maritalStatus
-    db_person.phone_number = person.phoneNumber
-    db_person.date_of_birth = person.DOB
-    db_person.gender = person.gender
-    db_person.house_flat_no = person.houseFlatNo
-    db_person.street = person.street
-    db_person.city = person.city
-    db_person.state = person.state
-    db_person.postal_code = person.postalCode
-    db_person.country = person.country
-    db_person.current_house_flat_no = person.currentHouseFlatNo
-    db_person.current_street = person.currentStreet
-    db_person.current_city = person.currentCity
-    db_person.current_postal_code = person.currentPostalCode
-    db_person.current_state = person.currentState
-    db_person.current_country = person.currentCountry
-    db_person.no_of_dependents = person.noOfDependents
-    db_person.time_at_current_address = person.timeAtCurrentAddress
-    db_person.verified_user = person.verifiedUser
+    # Update fields only if the values are provided
+    if person.email is not None:
+        db_person.email = person.email
+    if person.personName is not None:
+        db_person.person_name = person.personName
+    if person.firstName is not None:
+        db_person.first_name = person.firstName
+    if person.lastName is not None:
+        db_person.last_name = person.lastName
+    if person.fatherName is not None:
+        db_person.father_name = person.fatherName
+    if person.maritalStatus is not None:
+        db_person.marital_status = person.maritalStatus
+    if person.phoneNumber is not None:
+        db_person.phone_number = person.phoneNumber
+    if person.DOB is not None:
+        db_person.date_of_birth = person.DOB
+    if person.gender is not None:
+        db_person.gender = person.gender
+    if person.houseFlatNo is not None:
+        db_person.house_flat_no = person.houseFlatNo
+    if person.street is not None:
+        db_person.street = person.street
+    if person.city is not None:
+        db_person.city = person.city
+    if person.state is not None:
+        db_person.state = person.state
+    if person.postalCode is not None:
+        db_person.postal_code = person.postalCode
+    if person.country is not None:
+        db_person.country = person.country
+    if person.currentHouseFlatNo is not None:
+        db_person.current_house_flat_no = person.currentHouseFlatNo
+    if person.currentStreet is not None:
+        db_person.current_street = person.currentStreet
+    if person.currentCity is not None:
+        db_person.current_city = person.currentCity
+    if person.currentPostalCode is not None:
+        db_person.current_postal_code = person.currentPostalCode
+    if person.currentState is not None:
+        db_person.current_state = person.currentState
+    if person.currentCountry is not None:
+        db_person.current_country = person.currentCountry
+    if person.noOfDependents is not None:
+        db_person.no_of_dependents = person.noOfDependents
+    if person.timeAtCurrentAddress is not None:
+        db_person.time_at_current_address = person.timeAtCurrentAddress
+    if person.verifiedUser is not None:
+        db_person.verified_user = person.verifiedUser
 
     # Commit changes and refresh the object
     db.commit()
     db.refresh(db_person)
     return db_person
-
 
 def delete_person(db: Session, personId: str):
     db_person = get_person_by_id(db, personId)
