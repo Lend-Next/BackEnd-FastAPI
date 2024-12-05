@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from persons.routes import router as persons_router
 from database import engine
 from persons.models import Base  # Import the Base from your models
-from cognito_user_info.routes import router as user_info_router
 from fastapi.middleware.cors import CORSMiddleware
 from registration.routes import router as registration_router
 # from imageupload.routes import router as image_router
@@ -25,7 +24,7 @@ app.add_middleware(
 # Include feature-specific routers
 app.include_router(registration_router, prefix="/registration", tags=["Registration"])
 app.include_router(persons_router, prefix="/persons", tags=["Persons"])
-app.include_router(user_info_router, prefix="/current-user", tags=["User Info"])
+# app.include_router(user_info_router, prefix="/current-user", tags=["User Info"])
 # app.include_router(image_router)
 
 @app.get("/")
