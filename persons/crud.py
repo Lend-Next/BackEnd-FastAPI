@@ -1,5 +1,3 @@
-from tkinter import N
-from sqlalchemy import true
 from sqlalchemy.orm import Session
 from persons.models import Person
 from persons.schemas import PersonCreate, PersonUpdate
