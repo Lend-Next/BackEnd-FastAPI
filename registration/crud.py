@@ -42,7 +42,6 @@ from registration.schemas import UserEmail, CreateUser, ConfirmUser, SigninUser
 
 def create_user(user: CreateUser):
     try:
-        print('hey-1')
         response= cognito_client.sign_up(
             ClientId = CLIENT_ID,
             Username = user.email,
@@ -62,13 +61,10 @@ def create_user(user: CreateUser):
                 # }
             ]
         )
-        print('hey0')
         return response
     except cognito_client.exceptions.UsernameExistsException:
-        print('hey2')
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User nameexists")
     except Exception as e:
-        print('hey1')
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 def confirm_signup(user: ConfirmUser):
