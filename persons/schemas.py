@@ -43,13 +43,3 @@ class PersonResponse(PersonBase):
 
     class Config:
         orm_mode = True
-
-class IdVerificationResponse(BaseModel):
-    Name: str
-    DOB: str
-    ID_Document_Type: str
-    Gender: str
-    Success_Msg: str
-
-    class Config:
-        orm_mode = True

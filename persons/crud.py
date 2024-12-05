@@ -1,4 +1,5 @@
 from tkinter import N
+from sqlalchemy import true
 from sqlalchemy.orm import Session
 from persons.models import Person
 from persons.schemas import PersonCreate, PersonUpdate
@@ -17,18 +18,15 @@ def get_person_verification_data(db: Session, person_id: str):
     data = db.query(Person).filter(Person.person_id == person_id).first()
     if not data:
         return {"error": "Person not found."}
-    
-    # Update the user_verified field
-    data.verified_user = True
-    db.commit()  # Commit changes to the database
 
     mock_data = {
-        "Name": data.person_name,
-        "email": data.person_email,
-        "phone_number": data.person_phone,
+        "person_name": data.person_name,
+        "email": data.email,
+        "phone_number": data.phone_number,
         "first_name":data.first_name,
         "middle_name":data.middle_name,
         "last_name": data.last_name,
+        "user_id":data.user_id,
         "father_name":"John Doe",
         "date_of_birth":date(1990, 1, 1),
         "marital_status":"Single",
@@ -45,9 +43,9 @@ def get_person_verification_data(db: Session, person_id: str):
         "current_postal_code":"XYZ 1AB",
         "current_state":"London",
         "current_country":"UK",
-        "no_of_dependents":0,
+        "no_of_dependents":"0",
         "time_at_current_address":"5",
-        "Success Msg": "Id Verification is successful!"
+        "verified_user": "true"
     }
     return mock_data
 

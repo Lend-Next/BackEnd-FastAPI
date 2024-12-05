@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from persons import crud, schemas
+from sqlalchemy.exc import DataError
 
 router = APIRouter()
 
@@ -16,9 +17,12 @@ def get_db():
 def get_persons(db: Session = Depends(get_db)):
     return crud.get_persons(db)
 
-@router.get("/id-verification/{person_id}", response_model=schemas.IdVerificationResponse)
+@router.get("/id-verification/{person_id}", response_model=schemas.PersonBase)
 def get_person_verification_data(person_id: str, db: Session = Depends(get_db)):
-    mock_data = crud.get_person_verification_data(db, person_id)
+    try:
+        mock_data = crud.get_person_verification_data(db, str(person_id))
+    except DataError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format.")
     if not mock_data:
         raise HTTPException(status_code=404, detail="Id Verification Failed.")
     return mock_data
