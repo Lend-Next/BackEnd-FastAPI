@@ -4,42 +4,40 @@ from typing import Optional
 from datetime import date
 
 class PersonBase(BaseModel):
-    person_name: Optional[str]
-    applicant_id: Optional[str]
-    first_name: Optional[str]
-    middle_name: Optional[str]
-    last_name: Optional[str]
-    father_name: Optional[str]
+    personName: Optional[str]
+    firstName: Optional[str]
+    lastName: Optional[str]
+    fatherName: Optional[str]
     email: Optional[str]
-    phone_number: Optional[str]
-    date_of_birth: Optional[date]
-    marital_status: Optional[str]
+    phoneNumber: Optional[str]
+    DOB: Optional[date]
+    maritalStatus: Optional[str]
     gender: Optional[str]
-    house_flat_no: Optional[str]
+    houseFlatNo: Optional[str]
     street: Optional[str]
     city: Optional[str]
-    postal_code: Optional[str]
+    postalCode: Optional[str]
     state: Optional[str]
     country: Optional[str]
-    current_house_flat_no: Optional[str]
-    current_street: Optional[str]
-    current_city: Optional[str]
-    current_postal_code: Optional[str]
-    current_state: Optional[str]
-    current_country: Optional[str]
-    no_of_dependents: Optional[int]
-    time_at_current_address: Optional[int]
-    verified_user: Optional[bool]
-    user_id: Optional[str]
+    currentHouseFlatNo: Optional[str]
+    currentStreet: Optional[str]
+    currentCity: Optional[str]
+    currentPostalCode: Optional[str]
+    currentState: Optional[str]
+    currentCountry: Optional[str]
+    noOfDependents: Optional[int]
+    timeAtCurrentAddress: Optional[int]
+    verifiedUser: Optional[bool]
+    userId: Optional[str]
 
-class PersonCreate(PersonBase):
-    pass
+class PersonCreate(BaseModel):
+    firstName: Optional[str]
+    lastName: Optional[str]
+    email: Optional[str]
+    userId: Optional[str]
 
-class PersonUpdate(PersonBase):
-    pass
-
-class PersonResponse(PersonBase):
-    person_id: UUID
+class PersonResponse(BaseModel):
+    personId: UUID
 
     class Config:
         orm_mode = True
