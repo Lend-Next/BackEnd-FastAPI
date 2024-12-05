@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Date
+from sqlalchemy import Column, String, Integer, Date, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from database import Base
@@ -32,4 +32,5 @@ class Person(Base):
     current_country = Column(String)
     no_of_dependents = Column(Integer)
     time_at_current_address = Column(Integer)
+    verified_user = Column(Boolean)
     user_id = Column(String)

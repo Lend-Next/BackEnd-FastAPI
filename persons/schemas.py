@@ -29,6 +29,7 @@ class PersonBase(BaseModel):
     current_country: Optional[str]
     no_of_dependents: Optional[int]
     time_at_current_address: Optional[int]
+    verified_user: Optional[bool]
     user_id: Optional[str]
 
 class PersonCreate(PersonBase):
@@ -39,16 +40,6 @@ class PersonUpdate(PersonBase):
 
 class PersonResponse(PersonBase):
     person_id: UUID
-
-    class Config:
-        orm_mode = True
-
-class IdVerificationResponse(BaseModel):
-    Name: str
-    DOB: str
-    ID_Document_Type: str
-    Gender: str
-    Success_Msg: str
 
     class Config:
         orm_mode = True
