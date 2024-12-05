@@ -61,7 +61,7 @@ def create_user(user: CreateUser):
                 # }
             ]
         )
-        return response
+        return response['UserSub']
     except cognito_client.exceptions.UsernameExistsException:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User nameexists")
     except Exception as e:
