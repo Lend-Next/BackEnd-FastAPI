@@ -1,24 +1,41 @@
 import boto3
-from botocore.exceptions import NoCredentialsError
-from typing import Optional
-import os
+from sqlalchemy.orm import Session
+from uuid import uuid4
+from models import File
+from schemas import FileCreate
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+# S3 Configuration
+AWS_ACCESS_KEY_ID = "your-access-key"
+AWS_SECRET_ACCESS_KEY = "your-secret-key"
+AWS_BUCKET_NAME = "your-bucket-name"
+S3_FOLDER = "id-verification"
 
 s3_client = boto3.client(
-    's3',
+    "s3",
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
-def upload_image_to_s3(file, filename: str, bucket_name: str) -> Optional[str]:
-    try:
-        file_path = f"profile-pic/{filename}"
-        s3_client.upload_fileobj(file, bucket_name, file_path)
-        file_url = f"https://{bucket_name}.s3.amazonaws.com/{file_path}"
-        return file_url
-    except NoCredentialsError:
-        print("Credentials not available.")
-        return None
+def upload_file_to_s3(file, person_id: str) -> str:
+    file_id = str(uuid4())
+    file_extension = file.filename.split(".")[-1]
+    s3_key = f"{S3_FOLDER}/{file_id}.{file_extension}"
+
+    s3_client.upload_fileobj(
+        file.file,
+        AWS_BUCKET_NAME,
+        s3_key,
+        ExtraArgs={"ContentType": file.content_type}
+    )
+    return f"https://{AWS_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
+
+def save_file_metadata(db: Session, file_data: FileCreate) -> File:
+    new_file = File(
+        id=str(uuid4()),
+        file_uri=file_data.file_uri,
+        person_id=file_data.person_id
+    )
+    db.add(new_file)
+    db.commit()
+    db.refresh(new_file)
+    return new_file
