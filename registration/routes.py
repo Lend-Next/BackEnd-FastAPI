@@ -7,7 +7,7 @@ from registration.crud import create_user, confirm_signup, resend_confirm, signi
 
 router = APIRouter()
 
-@router.post("/signup", response_model=dict)
+@router.post("/signup")
 async def signup(user: CreateUser):  
     # print(create_user(user=user))
     return create_user(user=user)
