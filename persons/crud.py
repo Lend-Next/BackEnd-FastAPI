@@ -123,3 +123,23 @@ def delete_person(db: Session, personId: str):
     db.delete(db_person)
     db.commit()
     return db_person
+
+def get_person_address(db: Session, personId: str):
+    db_person = get_person_by_id(db, personId)
+    if not db_person:
+        return None
+    data = {
+        "houseFlatNo":db_person.house_flat_no,
+        "street":db_person.street,
+        "city":db_person.city,
+        "postalCode":db_person.postal_code,
+        "state":db_person.state,
+        "country":db_person.country,
+        "currentHouseFlatNo":db_person.current_house_flat_no,
+        "currentStreet":db_person.current_street,
+        "currentCity":db_person.current_city,
+        "currentPostalCode":db_person.current_postal_code,
+        "currentState":db_person.current_state,
+        "currentCountry":db_person.current_country
+    }
+    return data
