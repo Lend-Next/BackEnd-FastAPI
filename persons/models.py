@@ -8,7 +8,6 @@ class Person(Base):
 
     person_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     person_name = Column(String)
-    applicant_id = Column(String)
     first_name = Column(String)
     middle_name = Column(String)
     last_name = Column(String)
