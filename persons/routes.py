@@ -2,11 +2,12 @@ from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from persons import crud, schemas
+from typing import Generator
 from sqlalchemy.exc import DataError
 
 router = APIRouter()
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
