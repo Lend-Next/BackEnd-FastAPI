@@ -18,7 +18,7 @@ def get_persons(db: Session = Depends(get_db)):
     return crud.get_persons(db)
 
 
-@router.post("/id-verification/{personId}")
+@router.post("/id-verification")
 def get_person_verification_data(personId: str, file1: UploadFile, file2: UploadFile, db: Session = Depends(get_db)):
     try:
         mock_data = crud.get_person_verification_data(db, str(personId))
