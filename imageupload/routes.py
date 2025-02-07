@@ -44,26 +44,29 @@ async def upload_file(
 ):
     """Upload a file to the S3 bucket and save its metadata."""
     # Validate folder type
-    db = Depends(get_db)
-    if folder_type not in [S3_FOLDER_TYPE_IDENTITY, S3_FOLDER_TYPE_LIVE_PHOTO]:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Invalid folder type. Must be one of: {S3_FOLDER_TYPE_IDENTITY}, {S3_FOLDER_TYPE_LIVE_PHOTO}."
-        )
+    print(folder_type)
+    print(folder_type)
+    print(folder_type)
+    # db = Depends(get_db)
+    # if folder_type not in [S3_FOLDER_TYPE_IDENTITY, S3_FOLDER_TYPE_LIVE_PHOTO]:
+    #     raise HTTPException(
+    #         status_code=400, 
+    #         detail=f"Invalid folder type. Must be one of: {S3_FOLDER_TYPE_IDENTITY}, {S3_FOLDER_TYPE_LIVE_PHOTO}."
+    #     )
 
-    # Validate file
-    validate_file(file)
+    # # Validate file
+    # validate_file(file)
 
-    # Upload file to S3
-    file_uri = upload_file_to_s3(file, person_id, folder_type)
+    # # Upload file to S3
+    # file_uri = upload_file_to_s3(file, person_id, folder_type)
 
-    # Save file metadata to RDS
-    file_metadata = FileCreate(
-        file_uri=file_uri,
-        person_id=person_id,
-        document_category=folder_type
-    )
-    db_file = save_file_metadata(db, file_metadata)
+    # # Save file metadata to RDS
+    # file_metadata = FileCreate(
+    #     file_uri=file_uri,
+    #     person_id=person_id,
+    #     document_category=folder_type
+    # )
+    # db_file = save_file_metadata(db, file_metadata)
 
     # Return response
     return {
