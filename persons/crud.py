@@ -16,7 +16,7 @@ def get_person_by_id(db: Session, personId: str):
 
 
 # Function to return mock data and success message
-def get_person_verification_data(db, personId: str):
+def get_person_verification_data(db: Session, personId: str):
     data = db.query(Person).filter(Person.person_id == personId).first()
     if not data:
         return {"error": "Person not found."}
