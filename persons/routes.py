@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from persons import crud, schemas
@@ -17,15 +17,27 @@ def get_db():
 def get_persons(db: Session = Depends(get_db)):
     return crud.get_persons(db)
 
-@router.get("/id-verification/{personId}", response_model=schemas.PersonBase)
-def get_person_verification_data(personId: str, db: Session = Depends(get_db)):
+
+@router.post("/id-verification/{personId}")
+def get_person_verification_data(personId: str, file1: UploadFile, file2: UploadFile, db: Session = Depends(get_db)):
     try:
         mock_data = crud.get_person_verification_data(db, str(personId))
+        return mock_data
     except DataError:
         raise HTTPException(status_code=400, detail="Invalid UUID format.")
-    if not mock_data:
-        raise HTTPException(status_code=404, detail="Id Verification Failed.")
-    return mock_data
+    
+    
+
+
+# @router.get("/id-verification/{personId}", response_model=schemas.PersonBase)
+# def get_person_verification_data(personId: str, db: Session = Depends(get_db)):
+#     try:
+#         mock_data = crud.get_person_verification_data(db, str(personId))
+#     except DataError:
+#         raise HTTPException(status_code=400, detail="Invalid UUID format.")
+#     if not mock_data:
+#         raise HTTPException(status_code=404, detail="Id Verification Failed.")
+#     return mock_data
 
 @router.get("/{personId}")
 def get_person(personId: str, db: Session = Depends(get_db)):

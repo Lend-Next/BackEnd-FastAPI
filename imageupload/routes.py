@@ -44,9 +44,7 @@ async def upload_file(
 ):
     """Upload a file to the S3 bucket and save its metadata."""
     # Validate folder type
-    print(folder_type)
-    print(folder_type)
-    print(folder_type)
+
     db = Depends(get_db)
     if folder_type not in [S3_FOLDER_TYPE_IDENTITY, S3_FOLDER_TYPE_LIVE_PHOTO]:
         raise HTTPException(
