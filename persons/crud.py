@@ -1,7 +1,11 @@
+# from fastapi import Depends
+
 from sqlalchemy.orm import Session
 from persons.models import Person
 from persons.schemas import PersonCreate, PersonBase
 from datetime import date
+
+# from persons.routes import get_db
 
 
 def get_persons(db: Session):
@@ -12,7 +16,7 @@ def get_person_by_id(db: Session, personId: str):
 
 
 # Function to return mock data and success message
-def get_person_verification_data(db: Session, personId: str):
+def get_person_verification_data(db, personId: str):
     data = db.query(Person).filter(Person.person_id == personId).first()
     if not data:
         return {"error": "Person not found."}
