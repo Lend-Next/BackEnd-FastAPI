@@ -40,11 +40,11 @@ def validate_file(file: UploadFile) -> None:
 async def upload_file(
     folder_type: str,
     person_id: str,
-    file: UploadFile,
-    db: Session = Depends(get_db)
+    file: UploadFile
 ):
     """Upload a file to the S3 bucket and save its metadata."""
     # Validate folder type
+    db = Depends(get_db)
     if folder_type not in [S3_FOLDER_TYPE_IDENTITY, S3_FOLDER_TYPE_LIVE_PHOTO]:
         raise HTTPException(
             status_code=400, 
