@@ -23,6 +23,7 @@ class Person(Base):
     postal_code = Column(String)
     state = Column(String)
     country = Column(String)
+    ssn = Column(String)
     current_house_flat_no = Column(String)
     current_street = Column(String)
     current_city = Column(String)

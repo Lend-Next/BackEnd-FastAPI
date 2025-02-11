@@ -19,6 +19,7 @@ class PersonBase(BaseModel):
     postalCode: Optional[str]
     state: Optional[str]
     country: Optional[str]
+    ssn: Optional[str]
     currentHouseFlatNo: Optional[str]
     currentStreet: Optional[str]
     currentCity: Optional[str]
