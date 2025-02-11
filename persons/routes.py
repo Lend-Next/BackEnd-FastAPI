@@ -19,7 +19,7 @@ def get_persons(db: Session = Depends(get_db)):
     return crud.get_persons(db)
 
 
-@router.post("/id-verification")
+@router.post("/id-verification/{personId}", response_model=schemas.PersonBase)
 def get_person_verification_data(personId: str):
     try:
         mock_data = { "hello": personId}
