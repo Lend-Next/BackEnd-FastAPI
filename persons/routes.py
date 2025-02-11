@@ -20,9 +20,10 @@ def get_persons(db: Session = Depends(get_db)):
 
 
 @router.post("/id-verification")
-def get_person_verification_data(personId: str, file1: UploadFile, file2: UploadFile, db: Session = Depends(get_db)):
+def get_person_verification_data(personId: str):
     try:
-        mock_data = crud.get_person_verification_data(db, str(personId))
+        mock_data = { "hello": "new"}
+        # mock_data = crud.get_person_verification_data(db, str(personId))
         return mock_data
     except DataError:
         raise HTTPException(status_code=400, detail="Invalid UUID format.")
