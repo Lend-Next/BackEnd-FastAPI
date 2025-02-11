@@ -19,10 +19,10 @@ def get_persons(db: Session = Depends(get_db)):
     return crud.get_persons(db)
 
 
-@router.post("/id-verification")
+@router.post("/id-verification/{personId}")
 def get_person_verification_data(personId: str):
     try:
-        mock_data = { "hello": "new"}
+        mock_data = { "hello": personId}
         # mock_data = crud.get_person_verification_data(db, str(personId))
         return mock_data
     except DataError:
