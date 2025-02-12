@@ -31,7 +31,7 @@ def get_person_verification_data(db: Session, personId: str):
         "fatherName":"John Doe",
         "DOB":date(1990, 1, 1),
         "maritalStatus":"Single",
-        "gender":"Female",
+        "gender":"Male",
         "houseFlatNo":"123",
         "street":"Sample Street",
         "city":"London",
@@ -97,6 +97,8 @@ def update_person(db: Session, personId: str, person: PersonBase):
         db_person.postal_code = person.postalCode
     if person.country is not None:
         db_person.country = person.country
+    if person.ssn is not None:
+        db_person.ssn = person.ssn
     if person.currentHouseFlatNo is not None:
         db_person.current_house_flat_no = person.currentHouseFlatNo
     if person.currentStreet is not None:
@@ -119,7 +121,40 @@ def update_person(db: Session, personId: str, person: PersonBase):
     # Commit changes and refresh the object
     db.commit()
     db.refresh(db_person)
-    return db_person
+
+    if db_person:
+        updatedMockData = {
+            "personId" : db_person.person_id,
+            "personName": db_person.person_name,
+            "email": db_person.email,
+            "phoneNumber": db_person.phone_number,
+            "firstName":db_person.first_name,
+            "lastName": db_person.last_name,
+            "userId":db_person.user_id,
+            "fatherName":db_person.father_name,
+            "DOB":db_person.date_of_birth,
+            "maritalStatus":db_person.marital_status,
+            "gender":db_person.gender,
+            "houseFlatNo":db_person.house_flat_no,
+            "street":db_person.street,
+            "city":db_person.city,
+            "postalCode":db_person.postal_code,
+            "state":db_person.state,
+            "country":db_person.country,
+            "ssn": db_person.ssn,
+            "currentHouseFlatNo": db_person.current_house_flat_no,
+            "currentStreet":db_person.current_street,
+            "currentCity": db_person.current_city,
+            "currentPostalCode": db_person.current_postal_code,
+            "currentState":db_person.current_state,
+            "currentCountry":db_person.current_country,
+            "noOfDependents": db_person.no_of_dependents,
+            "timeAtCurrentAddress": db_person.time_at_current_address,
+            "verifiedUser": db_person.verified_user
+        }
+        return updatedMockData
+    else:
+        return ''
 
 def delete_person(db: Session, personId: str):
     db_person = get_person_by_id(db, personId)
