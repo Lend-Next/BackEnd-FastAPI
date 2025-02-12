@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from persons.routes import router as persons_router
+from bankaccount.routes import router as bankaccount_router
 from database import engine
 from persons.models import Base  # Import the Base from your models
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,6 +28,8 @@ app.add_middleware(
 app.include_router(registration_router, prefix="/registration", tags=["Registration"])
 app.include_router(persons_router, prefix="/persons", tags=["Persons"])
 app.include_router(image_router, prefix="/uploadimage", tags=["S3 Image Upload"])
+app.include_router(bankaccount_router, prefix="/bankaccount", tags=["BankAccount"])
+
 app.include_router(scorecard_router,prefix="/scorecard", tags=["Scorecard"])
 app.include_router(application_router, prefix="/application", tags=["Application"])
 
