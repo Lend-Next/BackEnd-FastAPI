@@ -47,7 +47,9 @@ def get_person_verification_data(db: Session, personId: str):
         "currentCountry":"UK",
         "noOfDependents": 0,
         "timeAtCurrentAddress": 5,
-        "verifiedUser": True
+        "verifiedUser": True,
+        "dwollaCustomerUrl": '',
+        "dwollaCustomerId": ''
     }
     return mock_data
 
@@ -117,6 +119,11 @@ def update_person(db: Session, personId: str, person: PersonBase):
         db_person.time_at_current_address = person.timeAtCurrentAddress
     if person.verifiedUser is not None:
         db_person.verified_user = person.verifiedUser
+    if person.dwollaCustomerUrl is not None:
+        db_person.dwolla_customer_url = person.dwollaCustomerUrl
+    if person.dwollaCustomerId is not None:
+        db_person.dwolla_customer_id = person.dwollaCustomerId
+
 
     # Commit changes and refresh the object
     db.commit()
@@ -150,7 +157,9 @@ def update_person(db: Session, personId: str, person: PersonBase):
             "currentCountry":db_person.current_country,
             "noOfDependents": db_person.no_of_dependents,
             "timeAtCurrentAddress": db_person.time_at_current_address,
-            "verifiedUser": db_person.verified_user
+            "verifiedUser": db_person.verified_user,
+            "dwollaCustomerUrl": db_person.dwolla_customer_url,
+            "dwollaCustomerId": db_person.dwolla_customer_id,
         }
         return updatedMockData
     else:

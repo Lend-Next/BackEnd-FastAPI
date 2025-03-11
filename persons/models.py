@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, Date, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from database import Base
+from database import Base, engine
 
 class Person(Base):
     __tablename__ = "persons"
@@ -34,3 +34,7 @@ class Person(Base):
     time_at_current_address = Column(Integer)
     verified_user = Column(Boolean)
     user_id = Column(String)
+    dwolla_customer_id = Column(String)
+    dwolla_customer_url = Column(String)
+
+Base.metadata.create_all(bind=engine)

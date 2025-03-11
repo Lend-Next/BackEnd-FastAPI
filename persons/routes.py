@@ -30,15 +30,15 @@ def get_person_verification_data(personId: str, file1: UploadFile, file2: Upload
     
 
 
-# @router.get("/id-verification/{personId}", response_model=schemas.PersonBase)
-# def get_person_verification_data(personId: str, db: Session = Depends(get_db)):
-#     try:
-#         mock_data = crud.get_person_verification_data(db, str(personId))
-#     except DataError:
-#         raise HTTPException(status_code=400, detail="Invalid UUID format.")
-#     if not mock_data:
-#         raise HTTPException(status_code=404, detail="Id Verification Failed.")
-#     return mock_data
+@router.get("/id-verification/{personId}", response_model=schemas.PersonBase)
+def get_person_verification_data(personId: str, db: Session = Depends(get_db)):
+    try:
+        mock_data = crud.get_person_verification_data(db, str(personId))
+    except DataError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format.")
+    if not mock_data:
+        raise HTTPException(status_code=404, detail="Id Verification Failed.")
+    return mock_data
 
 @router.get("/{personId}")
 def get_person(personId: str, db: Session = Depends(get_db)):

@@ -30,6 +30,8 @@ class PersonBase(BaseModel):
     timeAtCurrentAddress: Optional[int]
     verifiedUser: Optional[bool]
     userId: Optional[str]
+    dwollaCustomerId: Optional[str]
+    dwollaCustomerUrl: Optional[str]
 
 class PersonCreate(BaseModel):
     firstName: Optional[str]
