@@ -21,3 +21,6 @@ def create_bank_source(banksource: BankSourceCreate, db: Session):
 
 def get_bank_details(db: Session, personId: str):
     return db.query(BankSource).filter(BankSource.person_id == personId).all()
+
+def get_bank_details_from_source_id(db: Session, bankSourceId: str):
+    return db.query(BankSource).filter(BankSource.bank_source_id == bankSourceId).all()

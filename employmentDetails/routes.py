@@ -18,4 +18,3 @@ def get_db() -> Generator[Session, None, None]:
 def employmentdetails(personId: str, db: Session = Depends(get_db)):  
     details = get_employer_details(personId, db)
     return details
-

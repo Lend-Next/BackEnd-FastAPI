@@ -24,3 +24,10 @@ def getBankSourceDetails(personId: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Bank Details not found")
     return result
 
+@router.get("/bankDetails/{bankSourceId}")
+def getBankDetailsBySource(bankSourceId: str, db: Session = Depends(get_db)):
+    result = crud.get_bank_details_from_source_id(db, bankSourceId)
+    if not result:
+        raise HTTPException(status_code=404, detail="Bank Details not found")
+    return result
+
