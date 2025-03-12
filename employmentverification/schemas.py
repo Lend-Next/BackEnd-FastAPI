@@ -1,13 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from uuid import UUID
+from datetime import date
 
 class EmploymentRequest(BaseModel):
-    email: str
+    email: EmailStr
 
 class EmploymentResponse(BaseModel):
-    mail: str
-    company_name: str
-    result: str
-    current_term: int
+    employeeId: UUID
+    email: EmailStr
+    employerName: str
+    designation: str
+    startDate: date
+    employerAddress: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Newer Pydantic 2.x
