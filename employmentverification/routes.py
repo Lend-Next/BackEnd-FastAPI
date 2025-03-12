@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from typing import Generator
 from employmentverification.crud import fetch_company_details
-from employmentverification.schemas import EmploymentResponse, EmploymentRequest
+from employmentverification.schemas import EmploymentResponse
 
 router = APIRouter()
 
