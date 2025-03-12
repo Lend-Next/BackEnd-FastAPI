@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from bankaccount import crud, schemas
@@ -16,4 +16,11 @@ def get_db() -> Generator[Session, None, None]:
 @router.post("/banksourcecreate")
 def createbanksource(banksource: schemas.BankSourceCreate, db: Session = Depends(get_db)):
     return crud.create_bank_source(banksource, db)
+
+@router.get("/{personId}")
+def getBankSourceDetails(personId: str, db: Session = Depends(get_db)):
+    result = crud.get_bank_details(db, personId)
+    if not result:
+        raise HTTPException(status_code=404, detail="Bank Details not found")
+    return result
 

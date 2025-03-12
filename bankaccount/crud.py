@@ -3,12 +3,7 @@
 from sqlalchemy.orm import Session
 from bankaccount.models import BankSource
 from bankaccount.schemas import BankSourceCreate
-from datetime import date
-
 # from persons.routes import get_db
-
-
-
 
 def create_bank_source(banksource: BankSourceCreate, db: Session):
     db_banksource = BankSource(source_account_id=banksource.sourceAccountId, 
@@ -24,3 +19,5 @@ def create_bank_source(banksource: BankSourceCreate, db: Session):
         'bankSourceId' : db_banksource.bank_source_id
     }
 
+def get_bank_details(db: Session, personId: str):
+    return db.query(BankSource).filter(BankSource.person_id == personId).first()
