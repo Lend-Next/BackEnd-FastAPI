@@ -20,4 +20,4 @@ def create_bank_source(banksource: BankSourceCreate, db: Session):
     }
 
 def get_bank_details(db: Session, personId: str):
-    return db.query(BankSource).filter(BankSource.person_id == personId).first()
+    return db.query(BankSource).filter(BankSource.person_id == personId)

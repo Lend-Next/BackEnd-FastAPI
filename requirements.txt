@@ -19,3 +19,4 @@ passlib
 bcrypt
 pyjwt
 python-multipart
+email-validator
