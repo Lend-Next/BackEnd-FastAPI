@@ -9,6 +9,7 @@ from scorecard.routes import router as scorecard_router
 from application.routes import router as application_router
 from imageupload.routes import router as image_router
 from employmentverification.routes import router as employment_verification_router
+from employmentDetails.routes import router as employment_details_router
 
 
 app = FastAPI(title="CK-LendNext API")
@@ -34,6 +35,7 @@ app.include_router(bankaccount_router, prefix="/bankaccount", tags=["BankAccount
 app.include_router(scorecard_router,prefix="/scorecard", tags=["Scorecard"])
 app.include_router(application_router, prefix="/application", tags=["Application"])
 app.include_router(employment_verification_router, prefix="/employmentverification", tags=["Employment Verification"])
+app.include_router(employment_details_router, prefix="/employmentdetails", tags=["Employment Details"])
 
 
 @app.get("/")
