@@ -8,15 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import date
 
 def create_employment_record(email: str, db: Session):
-    try:
-        domain = email.split("@")[1].split(".")[0]
-    except IndexError:
-        raise HTTPException(status_code=400, detail="Invalid Email-Id.")
-    
-    if domain != "gmail":
-        employer_name = f"{domain.capitalize()} Private Limited"
-    else:
-        employer_name = "Cloudkaptan Consultancy Services Private Limited"
+    employer_name = "CloudKaptan Consultancy Services Private Limited"
 
     new_record = EmploymentVerification(
         email=email,
