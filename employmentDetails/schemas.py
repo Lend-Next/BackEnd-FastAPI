@@ -1,9 +1,8 @@
 from pydantic import BaseModel, EmailStr
-from uuid import UUID
 from datetime import date
 
 class EmploymentResponse(BaseModel):
-    employeeId: UUID
+    employeeId: str
     email: EmailStr
     employerName: str
     designation: str

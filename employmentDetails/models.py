@@ -7,7 +7,8 @@ from database import Base, engine
 class EmploymentVerification(Base):
     __tablename__ = "employment_details"
 
-    employee_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    employment_details_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    employee_id = Column(String, nullable=True)
     email = Column(String, unique=True, index=True, nullable=False)
     employer_name = Column(String, nullable=True)
     designation = Column(String, nullable=True)

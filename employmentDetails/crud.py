@@ -6,12 +6,16 @@ from employmentDetails.schemas import EmploymentResponse
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from datetime import date
+import random
 
 def create_employment_record(email: str, db: Session):
     employer_name = "CloudKaptan Consultancy Services Private Limited"
+    random_int = random.randint(0, 10000)
+    employeeIdNum = f"CKE-{random_int:05d}"
 
     new_record = EmploymentVerification(
         email=email,
+        employee_id= employeeIdNum,
         employer_name=employer_name,
         designation="Software Engineer",
         start_date=date(2022, 9, 28),
