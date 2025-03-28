@@ -9,7 +9,12 @@ from datetime import date
 
 
 def get_persons(db: Session):
-    db_person = db.query(Person).all()
+    return db.query(Person).all()
+    
+
+
+def get_person_by_id(db: Session, personId: str):
+    db_person = db.query(Person).filter(Person.person_id == personId).first()
     if db_person:
         updatedMockData = {
             "personId" : db_person.person_id,
@@ -45,10 +50,6 @@ def get_persons(db: Session):
         return updatedMockData
     else:
         return ''
-
-
-def get_person_by_id(db: Session, personId: str):
-    return db.query(Person).filter(Person.person_id == personId).first()
 
 
 # Function to return mock data and success message
