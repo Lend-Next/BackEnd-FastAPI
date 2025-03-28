@@ -17,7 +17,6 @@ def get_person_by_id(db: Session, personId: str):
     db_person = db.query(Person).filter(Person.person_id == personId).first()
     if db_person:
         updatedMockData = {
-            "personId" : db_person.person_id,
             "personName": db_person.person_name,
             "email": db_person.email,
             "phoneNumber": db_person.phone_number,
@@ -101,7 +100,7 @@ def create_person(db: Session, person: PersonCreate):
 
 def update_person(db: Session, personId: str, person: PersonBase):
     # Fetch the person by ID
-    db_person = get_person_by_id(db, personId)
+    db_person = db.query(Person).filter(Person.person_id == personId).first()
     if not db_person:
         return None  # Return None if the person is not found
 
@@ -203,7 +202,7 @@ def update_person(db: Session, personId: str, person: PersonBase):
         return ''
 
 def delete_person(db: Session, personId: str):
-    db_person = get_person_by_id(db, personId)
+    db_person = db.query(Person).filter(Person.person_id == personId).first()
     if not db_person:
         return None
     db.delete(db_person)
@@ -211,7 +210,7 @@ def delete_person(db: Session, personId: str):
     return db_person
 
 def get_person_address(db: Session, personId: str):
-    db_person = get_person_by_id(db, personId)
+    db_person = db.query(Person).filter(Person.person_id == personId).first()
     if not db_person:
         return None
     data = {
