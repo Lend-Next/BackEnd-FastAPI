@@ -1,5 +1,8 @@
-from fastapi import APIRouter
-
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from database import get_db
+from registration.schemas import SigninUser
+from .crud import signin_user
 
 from registration.schemas import UserEmail, CreateUser, ConfirmUser, SigninUser
 
@@ -20,6 +23,6 @@ async def confirmSignup(user: ConfirmUser):
 async def resendConfirm(user: UserEmail):
     return resend_confirm(user=user)
 
-@router.post("/signin", response_model=dict)
-async def signin(user: SigninUser):
-    return signin_user(user=user)
+@router.post("/signin")
+async def signin(user: SigninUser, db: Session = Depends(get_db)):  
+    return signin_user(user, db)  # ✅ Explicitly pass `db`

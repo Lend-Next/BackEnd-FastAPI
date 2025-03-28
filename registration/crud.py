@@ -1,10 +1,27 @@
-from fastapi import HTTPException, status
+import boto3
+from fastapi import Depends, HTTPException, status
 import jwt
 from datetime import datetime, timedelta
+from database import SessionLocal
+from persons.models import Person
+from sqlalchemy.orm import Session
+
 
 # Import all folder variables
 from .__init__ import USER_POOL_ID, CLIENT_ID, JWT_SECRET, cognito_client
 from registration.schemas import UserEmail, CreateUser, ConfirmUser, SigninUser
+
+COGNITO_CLIENT_ID = CLIENT_ID
+COGNITO_REGION = "ap-south-1"
+cognito_client = boto3.client("cognito-idp", region_name=COGNITO_REGION)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db  # Correct way to pass the session
+    finally:
+        db.close()
+
 
 # pwd_cxt = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -104,19 +121,56 @@ def create_jwt_token(name: str):
     token= jwt.encode(payload, JWT_SECRET, algorithm="HS256")
     return token
 
-def signin_user(user: SigninUser):
+# def signin_user(user: SigninUser):
+#     try:
+#         cognito_client.initiate_auth(
+#             AuthFlow='USER_PASSWORD_AUTH',
+#             AuthParameters={
+#                 'USERNAME': user.email,
+#                 'PASSWORD': user.password
+#             },
+#             ClientId = CLIENT_ID
+#         )
+#         token= create_jwt_token(user.email)
+#         return {'access_token': token, 'token_type': 'bearer'}
+#     except cognito_client.exceptions.NotAuthorizedException:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
+#     except Exception as e:
+#         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+def signin_user(user: SigninUser, db: Session):  # ✅ Remove Depends() here
     try:
-        cognito_client.initiate_auth(
+        response = cognito_client.initiate_auth(
             AuthFlow='USER_PASSWORD_AUTH',
             AuthParameters={
                 'USERNAME': user.email,
                 'PASSWORD': user.password
             },
-            ClientId = CLIENT_ID
+            ClientId=COGNITO_CLIENT_ID
         )
-        token= create_jwt_token(user.email)
-        return {'access_token': token, 'token_type': 'bearer'}
+
+        auth_result = response["AuthenticationResult"]
+        access_token = auth_result["AccessToken"]
+        id_token = auth_result["IdToken"]
+        refresh_token = auth_result["RefreshToken"]
+
+        payload = jwt.decode(id_token, options={"verify_signature": False})
+        user_id = payload.get("sub")
+
+        person = db.query(Person).filter(Person.user_id == user_id).first()
+
+        return {
+            "access_token": access_token,
+            "id_token": id_token,
+            "refresh_token": refresh_token,
+            "token_type": "Bearer",
+            "person_id": person.person_id if person else None
+        }
+
     except cognito_client.exceptions.NotAuthorizedException:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    except cognito_client.exceptions.UserNotFoundException:
+        raise HTTPException(status_code=404, detail="User does not exist")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
