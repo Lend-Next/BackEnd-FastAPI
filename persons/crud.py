@@ -9,7 +9,43 @@ from datetime import date
 
 
 def get_persons(db: Session):
-    return db.query(Person).all()
+    db_person = db.query(Person).all()
+    if db_person:
+        updatedMockData = {
+            "personId" : db_person.person_id,
+            "personName": db_person.person_name,
+            "email": db_person.email,
+            "phoneNumber": db_person.phone_number,
+            "firstName":db_person.first_name,
+            "lastName": db_person.last_name,
+            "userId":db_person.user_id,
+            "fatherName":db_person.father_name,
+            "DOB":db_person.date_of_birth,
+            "maritalStatus":db_person.marital_status,
+            "gender":db_person.gender,
+            "houseFlatNo":db_person.house_flat_no,
+            "street":db_person.street,
+            "city":db_person.city,
+            "postalCode":db_person.postal_code,
+            "state":db_person.state,
+            "country":db_person.country,
+            "ssn": db_person.ssn,
+            "currentHouseFlatNo": db_person.current_house_flat_no,
+            "currentStreet":db_person.current_street,
+            "currentCity": db_person.current_city,
+            "currentPostalCode": db_person.current_postal_code,
+            "currentState":db_person.current_state,
+            "currentCountry":db_person.current_country,
+            "noOfDependents": db_person.no_of_dependents,
+            "timeAtCurrentAddress": db_person.time_at_current_address,
+            "verifiedUser": db_person.verified_user,
+            "dwollaCustomerUrl": db_person.dwolla_customer_url,
+            "dwollaCustomerId": db_person.dwolla_customer_id,
+        }
+        return updatedMockData
+    else:
+        return ''
+
 
 def get_person_by_id(db: Session, personId: str):
     return db.query(Person).filter(Person.person_id == personId).first()
