@@ -5,33 +5,33 @@ from typing import Optional
 from datetime import date
 
 class ApplicationBase(BaseModel):
-    application_name: Optional [str]  = None
-    person_id: Optional [str]
-    product_id: Optional [str]
-    loan_amount: Optional [Decimal]
-    loan_term: Optional [Decimal]
-    interest_rate: Optional [Decimal]
-    status: Optional [str]
-    loan_id: Optional [str]
-    instalment_frequency: Optional [str]
-    drawdown_date: Optional [date]
-    first_instalment_date: Optional [date]
-    instalment_amount: Optional [Decimal]
-    interest_compounding_frequency: Optional [str]
-    current_department_id: Optional [str]
-    total_score: Optional [Decimal]
-    net_income: Optional [Decimal]
-    net_deduction: Optional [Decimal]
-    assigned_user_id: Optional [str]
+    application_name: Optional[str] = None
+    person_id: Optional[UUID] = None  # Still optional in base, but required in create
+    product_id: Optional[str] = None
+    loan_amount: Optional[Decimal] = None
+    loan_term: Optional[int] = None
+    interest_rate: Optional[Decimal] = None
+    status: Optional[str] = None
+    loan_id: Optional[str] = None
+    instalment_frequency: Optional[str] = None
+    drawdown_date: Optional[date] = None
+    first_instalment_date: Optional[date] = None
+    instalment_amount: Optional[Decimal] = None
+    interest_compounding_frequency: Optional[str] = None
+    current_department_id: Optional[str] = None
+    total_score: Optional[Decimal] = None
+    net_income: Optional[Decimal] = None
+    net_deduction: Optional[Decimal] = None
+    assigned_user_id: Optional[str] = None
 
 class ApplicationCreate(ApplicationBase):
-    pass
+    person_id: UUID  # ✅ Required because `nullable=False` in models.py
 
 class ApplicationUpdate(ApplicationBase):
     pass
 
 class ApplicationResponse(ApplicationBase):
-    application_id: UUID
+    application_id: UUID  # UUID as per models.py
 
     class Config:
         orm_mode = True

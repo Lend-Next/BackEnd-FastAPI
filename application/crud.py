@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from application.models import Application
 from application.schemas import ApplicationCreate, ApplicationUpdate
-from datetime import date
-from uuid import uuid4
 from sqlalchemy import text
 
 def get_applications(db: Session):
@@ -16,6 +14,32 @@ def generate_application_name(db: Session) -> str:
     result = db.execute(text("SELECT nextval('app_name_sequence')"))
     seq_number = result.scalar()  # Get the next number from the sequence
     return f"APP-{seq_number:07d}"
+
+def generate_application_data(db: Session, personid: str):
+    application_name = generate_application_name(db)  # Ensure the function runs properly
+    return {
+        "application_name": application_name,  # Fixed typo
+        "person_id": personid,
+        "product_id": "",
+        "loan_amount": 50000,
+        "loan_term": 60,
+        "interest_rate": 12.75,
+        "status": "Approved",
+        "loan_id": "",
+        "instalment_frequency": "Monthly",
+        "drawdown_date": None,
+        "first_instalment_date": None,
+        "instalment_amount": 2112.00,
+        "interest_compounding_frequency": "",
+        "current_department_id": "",
+        "total_score": None,
+        "net_income": None,
+        "net_deduction": None,
+        "assigned_user_id": ""
+    }
+
+
+    
 
 def create_application(db: Session, application: ApplicationCreate):
     # Generate the application_name before creating the Application

@@ -36,6 +36,13 @@ def get_application(app_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Application not found")
     return application
 
+@router.get("/createapp/{person_id}", response_model=schemas.ApplicationCreate)
+def get_application_data(person_id: str, db: Session = Depends(get_db)):
+    application_data = crud.generate_application_data(db, person_id)
+    if not application_data:
+        raise HTTPException(status_code=404)
+    return application_data
+
 @router.post("/create-application", response_model=schemas.ApplicationResponse)
 def create_application(application: schemas.ApplicationCreate, db: Session = Depends(get_db)):
     return crud.create_application(db, application)
